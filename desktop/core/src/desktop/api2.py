@@ -185,6 +185,9 @@ def get_context_computes(request, interface):
         cluster = cluster.copy()
         cluster['name'] = 'Altus Data Warehouse'
         cluster['type'] = 'altus-dw'
+      elif cluster.get('type') == 'altusv2':
+        cluster['name'] = 'Data Warehouse'
+        cluster['type'] = 'altus-dw2'
 
       computes.append(cluster)
 

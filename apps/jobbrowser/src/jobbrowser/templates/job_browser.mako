@@ -108,7 +108,7 @@ ${ commonheader("Data Warehouse", "jobbrowser", user, request) | n,unicode }
             <li class="app-header">
               <a href="/${app_name}">
                 <img src="${ static('jobbrowser/art/icon_jobbrowser_48.png') }" class="app-icon" alt="${ _('Job browser icon') }"/>
-                ${ _('Job Browser') }
+                ${ _('Data Warehouse') }
               </a>
             </li>
             <!-- ko foreach: availableInterfaces -->
@@ -2486,7 +2486,7 @@ ${ commonheader("Data Warehouse", "jobbrowser", user, request) | n,unicode }
       self.selectedJobs = ko.observableArray();
 
       self.hasKill = ko.pureComputed(function() {
-        return ['jobs', 'workflows', 'schedules', 'bundles', 'queries', 'dataeng-jobs', 'dataeng-clusters', 'dataware-clusters'].indexOf(vm.interface()) != -1 && !self.isCoordinator();
+        return ['jobs', 'workflows', 'schedules', 'bundles', 'queries', 'dataeng-jobs', 'dataeng-clusters', 'dataware-clusters', 'dataware2-clusters'].indexOf(vm.interface()) != -1 && !self.isCoordinator();
       });
       self.killEnabled = ko.pureComputed(function() {
         return self.hasKill() && self.selectedJobs().length > 0 && $.grep(self.selectedJobs(), function(job) {
@@ -2789,10 +2789,13 @@ ${ commonheader("Data Warehouse", "jobbrowser", user, request) | n,unicode }
           return self.appConfig() && self.appConfig()['browser'] && self.appConfig()['browser']['interpreter_names'].indexOf('yarn') != -1 && self.clusterType() != '${ ANALYTIC_DB }' && (!self.compute() || self.compute()['type'].indexOf('altus') == -1);
         };
         var dataEngInterfaceCondition = function () {
-          return self.compute() && self.compute()['type'].indexOf('altus-de') >= 0;
+          return self.compute() && self.compute()['type'] == 'altus-de';
         };
         var dataWarehouseInterfaceCondition = function () {
-          return self.compute() && self.compute()['type'].indexOf('altus-dw') >= 0;
+          return self.compute() && self.compute()['type'] == 'altus-dw';
+        };
+        var dataWarehouse2InterfaceCondition = function () {
+          return self.compute() && self.compute()['type'] == 'altus-dw2';
         };
         var schedulerInterfaceCondition = function () {
           return '${ user.has_hue_permission(action="access", app="oozie") }' == 'True' && self.clusterType() != '${ ANALYTIC_DB }' && (!self.compute() || self.compute()['type'].indexOf('altus') == -1);
@@ -2812,6 +2815,7 @@ ${ commonheader("Data Warehouse", "jobbrowser", user, request) | n,unicode }
           {'interface': 'dataeng-jobs', 'label': '${ _ko('Jobs') }', 'condition': dataEngInterfaceCondition},
           {'interface': 'dataeng-clusters', 'label': '${ _ko('Clusters') }', 'condition': dataEngInterfaceCondition},
           {'interface': 'dataware-clusters', 'label': '${ _ko('Clusters') }', 'condition': dataWarehouseInterfaceCondition},
+          {'interface': 'dataware2-clusters', 'label': '${ _ko('Clusters') }', 'condition': dataWarehouse2InterfaceCondition},
           {'interface': 'queries', 'label': '${ _ko('Queries') }', 'condition': queryInterfaceCondition},
           {'interface': 'workflows', 'label': '${ _ko('Workflows') }', 'condition': schedulerInterfaceCondition},
           {'interface': 'schedules', 'label': '${ _ko('Schedules') }', 'condition': schedulerInterfaceCondition},
@@ -2996,6 +3000,7 @@ ${ commonheader("Data Warehouse", "jobbrowser", user, request) | n,unicode }
           case 'bundles':
           case 'dataeng-clusters':
           case 'dataware-clusters':
+          case 'dataware2-clusters':
           case 'dataeng-jobs':
           case 'livy-sessions':
             self.selectInterface(h);
