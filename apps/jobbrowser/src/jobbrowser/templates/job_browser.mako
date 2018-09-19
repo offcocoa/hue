@@ -27,7 +27,7 @@ SUFFIX = is_mini and "-mini" or ""
 %>
 
 % if not is_embeddable:
-${ commonheader("Job Browser", "jobbrowser", user, request) | n,unicode }
+${ commonheader("Data Warehouse", "jobbrowser", user, request) | n,unicode }
 <%namespace name="assist" file="/assist.mako" />
 % endif
 
