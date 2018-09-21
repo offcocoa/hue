@@ -115,26 +115,28 @@ from desktop.views import _ko
             self.loadingComputes(true);
             self.lastComputesPromise = ContextCatalog.getComputes({ sourceType: ko.unwrap(self.sourceType) }).done(function (computes) {
               self.availableComputes(computes);
-
-              if (!self.compute()) {
-                self.compute(apiHelper.getFromTotalStorage('contextSelector', 'lastSelectedCompute'));
-              }
-
-              if (!self.compute() || !computes.some(function (compute) {
-                if (compute.id === self.compute().id) {
-                  self.compute(compute);
-                  return true;
-                }})) {
-
-                // If we can't find exact match we pick first based on type
-                if (!computes.some(function (compute) {
-                  if (compute.type === lastSelectedCompute.type) {
-                    self.compute(compute);
+              if (!self.compute() && apiHelper.getFromTotalStorage('contextSelector', 'lastSelectedCompute')) {
+                var lastSelectedCompute = apiHelper.getFromTotalStorage('contextSelector', 'lastSelectedCompute');
+                var found = computes.some(function (compute) {
+                  if (compute.id === lastSelectedCompute.id) {
+                    self.compute(lastSelectedCompute);
                     return true;
                   }
-                })) {
-                  self.compute(computes[0]);
+                });
+
+                // If we can't find exact match we pick first based on type
+                if (!found) {
+                  computes.some(function (compute) {
+                    if (compute.type === lastSelectedCompute.type) {
+                      self.compute(compute);
+                      return true;
+                    }
+                  });
                 }
+              }
+
+              if (!self.compute()) {
+                self.compute(computes[0]);
               }
 
               var computeSub = self.compute.subscribe(function (newCompute) {
