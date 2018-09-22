@@ -191,7 +191,7 @@ def get_context_computes(request, interface):
         'type': cluster.get('type')
       }
         
-      if cluster.get('type') == 'altus':
+      if cluster.get('type') == 'altus': # TODO Move key configs to the cluster section
         cluster['name'] = 'Altus DE'
         cluster['type'] = 'altus-de'
         computes.append(cluster)
